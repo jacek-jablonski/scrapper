@@ -22,7 +22,7 @@ class PagesService:
     ):
         self._pages_repository = pages_repository
         self._session = http_session
-        self._processors = list(processors)
+        self.set_processors(processors)
 
     async def _process_body(self, body: str) -> str:
         for processor in self._processors:
@@ -71,13 +71,15 @@ class PagesService:
             await self._pages_repository.upsert_task(updated_task)
             logger.info(f"Finished processing task {task._id}")
 
+    def set_processors(self, processors: List[Processor] = list()):
+        self._processors = list(processors)
+
     async def create_fetching_task(self, url: str) -> str:
         task = Task()
         task.url = url
         await self._pages_repository.upsert_task(task)
-        async_task = asyncio.create_task(self._process_task(task))
-        setattr(async_task, "worker", True)
-        return task._id
+        asyncio.create_task(self._process_task(task))
+        return str(task._id)
 
     async def get_task(self, task_id: str) -> Optional[Task]:
         return await self._pages_repository.get_task(task_id)
