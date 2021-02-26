@@ -12,7 +12,7 @@ pytest-mock = "*"
 pytest-aiohttp = "*"
 
 [packages]
-aiohttp = "==3.5.*"
+aiohttp = "==3.7.*"
 motor = "==2.0.*"
 schematics = "==2.1.*"
 
